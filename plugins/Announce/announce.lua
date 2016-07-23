@@ -5,7 +5,7 @@ local band = bit.band
 
 function A:COMBAT_LOG_EVENT_UNFILTERED(_, ...)
 	local _, eventType, _, _, sourceName, sourceFlags = ...
-	if band(sourceFlags, filter) == 0 or sourceName ~= S.myname then return end
+	if band(sourceFlags, filter) == 0 or sourceName ~= E.myname then return end
 	local spellId = select(12, ...)
 	local tspellId = select(15, ...)
 	

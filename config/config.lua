@@ -12,7 +12,7 @@ P["Notifications"]={
 
 P["Announce"]={
 	Open = true,
-	Interrupt = true,
+	Interrupt = false,
 	Channel = true,
 	Mislead = true,
 	BaoM = true,

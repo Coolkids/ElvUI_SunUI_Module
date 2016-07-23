@@ -119,11 +119,11 @@ function PT:Init()
 	bar.icon:SetSize(20, 20)
 	bar.icon:SetPoint("TOPRIGHT", bar, "TOPLEFT", -10, 0)
 	bar.icon:CreateShadow()
-	local A = S:GetModule("Skins")
+	local A = S:GetModule("Skins-SunUI")
 	A:CreateMark(bar)
 
-	local Data = S:GetModule("UnitFrames")
-	local C = Data.db
+	local Data = P["ClassAT"]
+	local C = Data
 	bar:SetSize(C.petWidth-1, 6)
 	bar:SetPoint("BOTTOM", "UIParent", "BOTTOM", -233, 220)
 	if S.myclass == "PRIEST" or S.myclass == "PALADIN" or S.myclass == "DEATHKNIGHT" then
@@ -138,3 +138,9 @@ function PT:Init()
 	
 	S:CreateMover(bar, "PetTimeMover", "宠物计时", true, nil, "ALL,MINITOOLS")
 end
+
+function PT:Initialize()
+	self:Init()
+end
+
+E:RegisterModule(PT:GetName())

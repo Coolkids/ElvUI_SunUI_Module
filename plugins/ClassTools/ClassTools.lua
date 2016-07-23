@@ -1,16 +1,97 @@
 local E, L, V, P, G = unpack(ElvUI); --Inport: Engine, Locales, PrivateDB, ProfileDB, GlobalDB
 local CT = E:NewModule("ClassTools", "AceEvent-3.0", "AceHook-3.0", "AceConsole-3.0")
-local datebase
+local datebase = setmetatable ({
+		["PRIEST"] = {
+		[0] = {},
+		[1] = {},
+		[2] = {},
+		[3] = {
+			["spellid"] = 32379,	--暗言术:灭
+			["per"] = 0.2,
+			["level"] = 47,
+		},
+	},
+	["HUNTER"] = {
+		[0] = {},
+		[1] = {},
+		[2] = {},
+		[3] = {},
+	},
+	["MAGE"] = {
+		[0] = {},
+		[1] = {},
+		[2] = {},
+		[3] = {},
+	},
+	["WARLOCK"] = {
+		[0] = {},
+		[1] = {},
+		[2] = {},
+		[3] = {},
+	},
+	["PALADIN"] = {
+		[0] = {},
+		[1] = {},
+		[2] = {},
+		[3] = {},
+	},
+	["ROGUE"] = {
+		[0] = {},
+		[1] = {},
+		[2] = {},
+		[3] = {},
+	},
+	["DRUID"] = {
+		[0] = {},
+		[1] = {},
+		[2] = {},
+		[3] = {},
+		[4] = {},
+	},
+	["SHAMAN"] = {
+		[0] = {},
+		[1] = {},
+		[2] = {},
+		[3] = {},
+	},
+	["WARRIOR"] = {
+		[0] = {},
+		[1] = {
+			["spellid"] = 163201,	--斩杀
+			["per"] = 0.2,
+			["level"] = 7,
+		},
+		[2] = {
+			["spellid"] = 5308,		--斩杀
+			["per"] = 0.2,
+			["level"] = 7,
+		},
+		[3] = {
+		},
+	},
+	["DEATHKNIGHT"] = {
+		[0] = {},
+		[1] = {},
+		[2] = {},
+		[3] = {},
+	},
+	["MONK"] = {
+		[0] = {},
+		[1] = {},
+		[2] = {},
+		[3] = {},
+	},
+},{__index=function() return -1 end})
 
 CT.ButtonList = {}
 
 function CT:initFrame()
 	if not self.Frame then
-		local Data = S:GetModule("ClassAT")
+		local Data = P["ClassAT"]
 		self.Frame = CreateFrame("Frame", nil, UIParent)
 		self.Frame:Hide()
 		self.Frame:SetPoint("TOP", "UIParent", "TOP", 0, -35)
-		self.Frame:SetSize(Data.db.Size, Data.db.Size)
+		self.Frame:SetSize(Data.Size, Data.Size)
 		self.Frame.Cooldown = CreateFrame("Cooldown", nil, self.Frame)
 		self.Frame.Cooldown:SetAllPoints()
 		self.Frame.Cooldown:SetReverse(true)
@@ -20,7 +101,7 @@ function CT:initFrame()
 		self.Frame.Icon:SetAllPoints(self.Frame)
 		
 		self.Frame:CreateShadow()
-		S:CreateMover(self.Frame, "ClassToolsMover", "斩杀提示", true, nil, "ALL,MINITOOLS")
+		E:CreateMover(self.Frame, "ClassToolsMover", "斩杀提示", nil, nil, nil, "ALL")
 	end
 end
 
@@ -45,16 +126,16 @@ function CT:ACTIVE_TALENT_GROUP_CHANGED()
 	
 	local spec = GetSpecialization()
 	if not spec then return end
-	--print(#datebase[S.myclass])
-	if datebase[S.myclass] == -1 then 
+	--print(#datebase[E.myclass])
+	if datebase[E.myclass] == -1 then 
 		self:UnregisterAllEvents()
 		return
 	end
-	--print(datebase[S.myclass][0].spellid)
-	if datebase[S.myclass][0].spellid then
-		self.spellid = datebase[S.myclass][0].spellid
-		self.per = datebase[S.myclass][0].per
-		self.level = datebase[S.myclass][0].level
+	--print(datebase[E.myclass][0].spellid)
+	if datebase[E.myclass][0].spellid then
+		self.spellid = datebase[E.myclass][0].spellid
+		self.per = datebase[E.myclass][0].per
+		self.level = datebase[E.myclass][0].level
 		self:RegisterEvent("UNIT_HEALTH")
 		self:RegisterEvent("PLAYER_TARGET_CHANGED")
 		self:RegisterEvent("SPELL_UPDATE_COOLDOWN")
@@ -63,10 +144,10 @@ function CT:ACTIVE_TALENT_GROUP_CHANGED()
 		return
 	end
 
-	if datebase[S.myclass][spec].spellid then
-		self.spellid = datebase[S.myclass][spec].spellid
-		self.per = datebase[S.myclass][spec].per
-		self.level = datebase[S.myclass][spec].level
+	if datebase[E.myclass][spec].spellid then
+		self.spellid = datebase[E.myclass][spec].spellid
+		self.per = datebase[E.myclass][spec].per
+		self.level = datebase[E.myclass][spec].level
 		self:RegisterEvent("UNIT_HEALTH")
 		self:RegisterEvent("PLAYER_TARGET_CHANGED")
 		self:RegisterEvent("SPELL_UPDATE_COOLDOWN")
@@ -82,17 +163,17 @@ function CT:ACTIVE_TALENT_GROUP_CHANGED()
 end
 
 function CT:UpdateSet()
-	local Data = S:GetModule("ClassAT")
+	local Data = P["ClassAT"]
 	self:initFrame();
 	
-	if Data.db.Enable then
+	if Data.Enable then
 		self:RegisterEvent("ACTIVE_TALENT_GROUP_CHANGED")
 		self:ACTIVE_TALENT_GROUP_CHANGED()
 		
 		if self.Frame then
-			self.Frame:SetSize(Data.db.Size, Data.db.Size)
+			self.Frame:SetSize(Data.Size, Data.Size)
 		end
-		if not Data.db.Icon then
+		if not Data.Icon then
 			self:disFrame();
 		end
 	else
@@ -103,11 +184,11 @@ end
 
 function CT:ShowOverlayGlow()
 	if self.SunUIShowOverlayGlow then return end
-	local Data = S:GetModule("ClassAT")
+	local Data = P["ClassAT"]
 	for i=1, #(self.ButtonList) do
 		ActionButton_ShowOverlayGlow(self.ButtonList[i])
 	end
-	if self.Frame and (not self.Frame:IsShown()) and Data.db.Icon then
+	if self.Frame and (not self.Frame:IsShown()) and Data.Icon then
 		self.Frame:Show()
 	end
 	self.SunUIShowOverlayGlow = true
@@ -183,8 +264,12 @@ function CT:PLAYER_ENTERING_WORLD()
 	self:UnregisterEvent("PLAYER_ENTERING_WORLD")
 end
 function CT:Init()
-	local Data = S:GetModule("ClassAT")
-	datebase = Data.ClassTools
 	self:UpdateSet()
 	self:RegisterEvent("PLAYER_ENTERING_WORLD")
 end
+
+function CT:Initialize()
+	self:Init()
+end
+
+E:RegisterModule(CT:GetName())
