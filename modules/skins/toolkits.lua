@@ -1,20 +1,6 @@
 local E, L, V, P, G = unpack(ElvUI); --Inport: Engine, Locales, PrivateDB, ProfileDB, GlobalDB
 local LSM = LibStub("LibSharedMedia-3.0")
 
-function E:CreateFS(parent, fontSize, justify, fontname, fontStyle)
-    local f = parent:CreateFontString(nil, "OVERLAY")
-	
-	if fontname == nil then
-		f:FontTemplate(nil, fontSize, fontStyle)
-	else
-		f:FontTemplate(fontname, fontSize, fontStyle)
-	end
-
-    if justify then f:SetJustifyH(justify) end
-
-    return f
-end
-
 local function FontTemplate(fs, font, fontSize, fontStyle)
 	fs.font = font
 	fs.fontSize = fontSize
@@ -156,6 +142,43 @@ local function SetTemplate(f, t, glossTex, ignoreUpdates, forcePixelMode)
 	if not f.ignoreUpdates and not f.forcePixelMode then
 		E["frames"][f] = true
 	end
+end
+
+local function SetTemplate2(f, t, glossTex)
+	local r, g, b, alpha = unpack(P["media"].backdropcolor)
+	if t == "Transparent" then 
+		r, g, b, alpha = unpack(P["media"].backdropfadecolor)
+	end
+
+    if t == "Border" then
+        f:SetBackdrop({
+            edgeFile = P["media"].blank, 
+            edgeSize = E.mult, 
+            tile = false,
+            tileSize = 0,
+        })
+    else
+        f:SetBackdrop({
+            bgFile = P["media"].blank, 
+            edgeFile = P["media"].blank, 
+            edgeSize = E.mult, 
+            tile = false,
+            tileSize = 0,
+        })
+    end
+
+	if glossTex then 
+        f.backdropTexture = f:CreateTexture(nil, "BACKGROUND")
+        f.backdropTexture:SetDrawLayer("BACKGROUND", 1)
+        f.backdropTexture:SetInside(f, E.mult, E.mult)
+        f.backdropTexture:SetTexture(P["media"].gloss)
+        f.backdropTexture:SetVertexColor(unpack(P["media"].backdropcolor))
+        f.backdropTexture:SetAlpha(.8)
+        alpha = 0
+	end
+
+	f:SetBackdropColor(backdropfadecolorr, backdropfadecolorg, backdropfadecolorb, alpha)
+	f:SetBackdropBorderColor(unpack(P["media"].bordercolor))
 end
 
 local function addapi(object)

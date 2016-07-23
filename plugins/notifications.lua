@@ -381,7 +381,7 @@ function N:PLAYER_LOGIN()
 		self:Notification("击杀提醒", namelist, nil, "INTERFACE\\ICONS\\SPELL_FROST_ARCTICWINDS", .08, .92, .08, .92)
 	end
 	
-	self:UnregisterEvent("PLAYER_LOGIN")
+	self:UnregisterEvent("PLAYER_ENTERING_WORLD")
 end
 
 function N:VIGNETTE_ADDED(event, vignetteInstanceID)
@@ -431,7 +431,7 @@ E.Options.args.Notification = N:GetOptions()
 
 function N:UpdateSet()
 	if self.db.Notification then
-		self:RegisterEvent("PLAYER_LOGIN")
+		self:RegisterEvent("PLAYER_ENTERING_WORLD")
 		self:RegisterEvent("UPDATE_PENDING_MAIL")
 		self:RegisterEvent("PLAYER_REGEN_ENABLED")
 		self:RegisterEvent("CALENDAR_UPDATE_PENDING_INVITES")
@@ -440,7 +440,7 @@ function N:UpdateSet()
 		self:RegisterEvent("VIGNETTE_ADDED")
 		self:RegisterEvent("RESURRECT_REQUEST")
 	else
-		self:UnregisterEvent("PLAYER_LOGIN")
+		self:UnregisterEvent("PLAYER_ENTERING_WORLD")
 		self:UnregisterEvent("UPDATE_PENDING_MAIL")
 		self:UnregisterEvent("PLAYER_REGEN_ENABLED")
 		self:UnregisterEvent("CALENDAR_UPDATE_PENDING_INVITES")
@@ -459,7 +459,7 @@ function N:Initialize()
 	self:initDate()
 	A:CreateBD(f)
 	A:CreateBG(icon)
-	E:CreateMover(f, "NotificationsMover", "通知", true, nil, "ALL")
+	E:CreateMover(f, "NotificationsMover", "通知", nil, nil, nil, "ALL")
 	self:UpdateSet()
 end
 

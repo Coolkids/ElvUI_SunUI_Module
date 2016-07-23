@@ -1,5 +1,4 @@
 --http://mods.curse.com/addons/wow/close-up
-
 local _G = getfenv(0)
 local GetCursorPosition = GetCursorPosition
 local function nada() end

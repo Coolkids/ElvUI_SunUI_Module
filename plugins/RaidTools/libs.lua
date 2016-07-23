@@ -1,5 +1,5 @@
 local E, L, V, P, G = unpack(ElvUI); --Inport: Engine, Locales, PrivateDB, ProfileDB, GlobalDB
-local RT = S:GetModule("RLTools")
+local RT = E:GetModule("RLTools")
 -------------------------------------------------------------------------
 -------------------------------------------------------------------------
 -----------------from EUI           -------------------------------------

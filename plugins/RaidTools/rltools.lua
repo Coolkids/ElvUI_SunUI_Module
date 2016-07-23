@@ -1,10 +1,9 @@
 local E, L, V, P, G = unpack(ElvUI); --Inport: Engine, Locales, PrivateDB, ProfileDB, GlobalDB
-local RT = S:NewModule("RLTools", "AceEvent-3.0", "AceHook-3.0", "AceConsole-3.0")
-
+local RT = E:NewModule("RLTools", "AceEvent-3.0", "AceHook-3.0", "AceConsole-3.0")
 function RT:CreateText(parent, text, point)
-	local texture = S:CreateFS(parent)
+	local texture = E:CreateFS(parent)
 	texture:SetText(text)
-	texture:SetTextColor(S.myclasscolor.r, S.myclasscolor.g, S.myclasscolor.b)
+	texture:SetTextColor(RAID_CLASS_COLORS[E.myclass].r, RAID_CLASS_COLORS[E.myclass].g, RAID_CLASS_COLORS[E.myclass].b)
 	texture:SetJustifyV("MIDDLE")
 	texture:SetJustifyH("CENTER")
 	if point then
@@ -29,7 +28,7 @@ function RT:CreateButton(parent, width, height, text, point, func, reskin)
 	button:SetPoint(unpack(point))
 	button.text = self:CreateText(button, text)
 	if reskin==nil or reskin then
-		local A = S:GetModule("Skins")
+		local A = E:GetModule("Skins-SunUI")
 		A:Reskin(button)
 	end
 	button:SetScript("OnMouseDown", func)
@@ -38,14 +37,14 @@ end
 
 function RT:initButton()
 	--主按钮
-	self.mainButton = self:CreateButton(oUF_PetBattleFrameHider, 70, 20, RT.L.RAIDCHECK_RAIDTOOL, {"TOP", TopInfoPanel or UIParent, "TOP", 0, -8}, function()
+	self.mainButton = self:CreateButton(oUF_PetBattleFrameHider, 70, 20, RT.L.RAIDCHECK_RAIDTOOL, {"TOP", UIParent, "TOP", 0, -5}, function()
 		if not self.mainFrame.bannerShown then
-			S:ShowAnima(self.mainFrame)
+			E:ShowAnima(self.mainFrame)
 		else
-			S:HideAnima(self.mainFrame)
+			E:HideAnima(self.mainFrame)
 		end
 	end)
-	S:CreateMover(self.mainButton, "RLToolsMover", RT.L.RAIDCHECK_RAIDTOOL, true, nil, "ALL,GENERAL")
+	E:CreateMover(self.mainButton, "RLToolsMover", RT.L.RAIDCHECK_RAIDTOOL, nil, nil, nil,"ALL")
 	--主界面
 	self.mainFrame = CreateFrame("Button", nil, self.mainButton)
 	self.mainFrame:SetSize(226, 166)
@@ -54,7 +53,7 @@ function RT:initButton()
 	
 	--返回按钮
 	self.backButton = self:CreateButton(self.mainFrame, 22, 22, "^", {"TOP", self.mainFrame, "BOTTOM", 0, -5}, function()
-		S:HideAnima(self.mainFrame)
+		E:HideAnima(self.mainFrame)
 	end)
 
 	--解散队伍/团队
@@ -216,9 +215,9 @@ function RT:SetPoint()
 end
 
 function RT:Reskin()
-	local A = S:GetModule("Skins")
+	local A = E:GetModule("Skins-SunUI")
 	A:Reskin(self.mainButton)
-	self.mainFrame:CreateShadow("Background")
+	A:CreateShadow2(self.mainFrame, "Background")
 	A:Reskin(self.mainFrame.wm, false, true)
 	A:ReskinCheck(self.mainFrame.asbutton.checkButton)
 end
@@ -257,31 +256,17 @@ function RT:OnEvent()
 	else
 		self.mainButton:Hide()
 	end
-	--隐藏团队框旁边的东西
-	if CompactRaidFrameManagerDisplayFrameLeaderOptionsRaidWorldMarkerButtonLeft then
-		CompactRaidFrameManagerDisplayFrameLeaderOptionsRaidWorldMarkerButtonLeft:SetAlpha(0) 
-		CompactRaidFrameManagerDisplayFrameLeaderOptionsRaidWorldMarkerButtonMiddle:SetAlpha(0) 
-		CompactRaidFrameManagerDisplayFrameLeaderOptionsRaidWorldMarkerButtonRight:SetAlpha(0)
-	end
-	--[[local raid =  IsInRaid()
-	if (raid and (UnitIsGroupLeader("player") or UnitIsGroupAssistant("player"))) or (GetNumSubgroupMembers() > 0 and not raid) then 
-		--self:Show()
-	else 
-		--test
-		--self:Hide() 
-	end]]
 end
 
 function RT:Initialize()
 	self:initButton()
-	self:SetPoint()
+	--self:SetPoint()
 	self:Reskin()
 	self:SetScript()
-	
 	--事件
 	self:RegisterEvent("PLAYER_ENTERING_WORLD") 
 	self:RegisterEvent("GROUP_ROSTER_UPDATE")  
 end
 
 
-S:RegisterModule(RT:GetName())
+E:RegisterModule(RT:GetName())

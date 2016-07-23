@@ -1,5 +1,4 @@
 ﻿local E, L, V, P, G = unpack(ElvUI); --Inport: Engine, Locales, PrivateDB, ProfileDB, GlobalDB
-
 local A = E:NewModule("Announce", "AceEvent-3.0", "AceHook-3.0", "AceConsole-3.0")
 
 A.modName = "施法通告"

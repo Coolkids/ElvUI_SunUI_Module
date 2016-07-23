@@ -14,6 +14,43 @@ else
 	r, g, b =  RAID_CLASS_COLORS[E.myclass].r, RAID_CLASS_COLORS[E.myclass].g, RAID_CLASS_COLORS[E.myclass].b
 end
 
+local function SetTemplate3(f, t, glossTex)
+	local r, g, b, alpha = unpack(P["media"].backdropcolor)
+	if t == "Transparent" then 
+		r, g, b, alpha = unpack(P["media"].backdropfadecolor)
+	end
+
+    if t == "Border" then
+        f:SetBackdrop({
+            edgeFile = P["media"].blank, 
+            edgeSize = E.mult, 
+            tile = false,
+            tileSize = 0,
+        })
+    else
+        f:SetBackdrop({
+            bgFile = P["media"].blank, 
+            edgeFile = P["media"].blank, 
+            edgeSize = E.mult, 
+            tile = false,
+            tileSize = 0,
+        })
+    end
+
+	if glossTex then 
+        f.backdropTexture = f:CreateTexture(nil, "BACKGROUND")
+        f.backdropTexture:SetDrawLayer("BACKGROUND", 1)
+        f.backdropTexture:SetInside(f, E.mult, E.mult)
+        f.backdropTexture:SetTexture(P["media"].gloss)
+        f.backdropTexture:SetVertexColor(unpack(P["media"].backdropcolor))
+        f.backdropTexture:SetAlpha(.8)
+        alpha = 0
+	end
+
+	f:SetBackdropColor(backdropfadecolorr, backdropfadecolorg, backdropfadecolorb, alpha)
+	f:SetBackdropBorderColor(unpack(P["media"].bordercolor))
+end
+
 A["media"] = {
 	["checked"] = "Interface\\AddOns\\ElvUI_SunUI_Module\\media\\CheckButtonHilight",
 	["arrowUp"] = "Interface\\AddOns\\ElvUI_SunUI_Module\\media\\arrow-up-active",
@@ -86,7 +123,7 @@ function A:CreateSD(parent, size, r, g, b, alpha, offset)
 	sd.offset = offset or 0
 	sd:Point("TOPLEFT", parent, -sd.size - 1 - sd.offset, sd.size + 1 + sd.offset)
 	sd:Point("BOTTOMRIGHT", parent, sd.size + 1 + sd.offset, -sd.size - 1 - sd.offset)
-	sd:CreateShadow()
+	self:CreateShadow2(sd)
 	sd.shadow:SetBackdropBorderColor(r or bordercolorr, g or bordercolorg, b or bordercolorb)
 	sd.border:SetBackdropBorderColor(r or bordercolorr, g or bordercolorg, b or bordercolorb)
 	sd:SetAlpha(alpha or 1)
@@ -119,8 +156,8 @@ local function StartGlow(f)
 	if not f:IsEnabled() then return end
 	f:SetBackdropColor(r, g, b, .2)
 	f:SetBackdropBorderColor(r, g, b)
-  f.glow:SetAlpha(1)
-  A:CreatePulse(f.glow)
+	f.glow:SetAlpha(1)
+	A:CreatePulse(f.glow)
 end
 
 local function StopGlow(f)
@@ -149,10 +186,11 @@ function A:Reskin(f, noGlow, saveTexture)
 	if f.LeftSeparator then f.LeftSeparator:Hide() end
 	if f.RightSeparator then f.RightSeparator:Hide() end
 
-	f:SetTemplate("Default", true)
+	SetTemplate3(f, "Default", true)
 
 	if not noGlow then
 		f.glow = CreateFrame("Frame", nil, f)
+		f.glow:SetFrameLevel(f:GetFrameLevel()+1)
 		f.glow:SetBackdrop({
 			edgeFile = P["media"].glow,
 			edgeSize = E:Scale(4),
@@ -160,7 +198,7 @@ function A:Reskin(f, noGlow, saveTexture)
 		f.glow:SetOutside(f, 4, 4)
 		f.glow:SetBackdropBorderColor(r, g, b)
 		f.glow:SetAlpha(0)
-
+		
 		f:HookScript("OnEnter", StartGlow)
 		f:HookScript("OnLeave", StopGlow)
 	end
@@ -511,6 +549,45 @@ function A:CreateMark(f, orientation)
 	return spark
 end
 
+function A:CreateShadow2(f, t, thickness)
+	if f.shadow then return end
+
+	local borderr, borderg, borderb = 0, 0, 0
+    local backdropr, backdropg, backdropb, backdropa = unpack(P["media"].backdropcolor)
+	local frameLevel = f:GetFrameLevel() > 1 and f:GetFrameLevel() - 1 or 1
+	local thickness = thickness or 4
+	local offset = thickness - 1
+
+    if t == "Background" then
+        backdropr, backdropg, backdropb, backdropa = unpack(P["media"].backdropfadecolor)
+    elseif type(t) == "number" then
+		backdropa = t
+	else
+        backdropa = 0
+    end
+
+	local border = CreateFrame("Frame", nil, f)
+	border:SetFrameLevel(frameLevel-1)
+	border:SetOutside(f, 1, 1)
+    SetTemplate3(border, "Border")
+	f.border = border
+
+	local shadow = CreateFrame("Frame", nil, border)
+	shadow:SetFrameLevel(frameLevel - 1)
+	shadow:SetOutside(border, offset, offset)
+	shadow:SetBackdrop( {
+		edgeFile = P["media"].glow,
+        bgFile = P["media"].blank, 
+		edgeSize = E:Scale(thickness),
+        tile = false,
+        tileSize = 0,
+		insets = {left = E:Scale(thickness), right = E:Scale(thickness), top = E:Scale(thickness), bottom = E:Scale(thickness)},
+	})
+	shadow:SetBackdropColor( backdropr, backdropg, backdropb, backdropa )
+	shadow:SetBackdropBorderColor( borderr, borderg, borderb )
+	f.shadow = shadow
+end
+
 function A:CreateShadow(p, f, t, thickness) 
 	if p.shadow then return end
 
@@ -529,7 +606,7 @@ function A:CreateShadow(p, f, t, thickness)
 	local border = CreateFrame("Frame", nil, p)
 	border:SetFrameLevel(frameLevel)
 	border:SetOutside(f, 1, 1)
-    border:SetTemplate("Border")
+    SetTemplate3(border, "Border")
 	f.border = border
 
 	local shadow = CreateFrame("Frame", nil, border)
