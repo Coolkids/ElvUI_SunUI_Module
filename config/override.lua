@@ -1,7 +1,7 @@
 local E, L, V, P, G = unpack(ElvUI); --Inport: Engine, Locales, PrivateDB, ProfileDB, GlobalDB
 local LSM = LibStub("LibSharedMedia-3.0")
 
-P["medialib"]={
+P["media"]={
 	font = "SunUI Font",
 	dmgfont = "SunUI Combat",
 	fontsize = 12,
@@ -16,21 +16,20 @@ P["medialib"]={
 	backdropfadecolor = { .04, .04, .04, .7 },
 	bordercolor = { 0, 0, 0 },
 }
-P["media"]={}
-P["media"].blank = LSM:Fetch("statusbar", P["medialib"].blank)
-P["media"].normal = LSM:Fetch("statusbar", P["medialib"].normal)
-P["media"].gloss = LSM:Fetch("statusbar", P["medialib"].gloss)
-P["media"].glow = LSM:Fetch("border", P["medialib"].glow)
+P["media"].blank = LSM:Fetch("statusbar", P["media"].blank)
+P["media"].normal = LSM:Fetch("statusbar", P["media"].normal)
+P["media"].gloss = LSM:Fetch("statusbar", P["media"].gloss)
+P["media"].glow = LSM:Fetch("border", P["media"].glow)
 
 --Border Color
-P["media"].bordercolor = P["medialib"].bordercolor
+P["media"].bordercolor = P["media"].bordercolor
 
 --Backdrop Color
-P["media"].backdropcolor = P["medialib"].backdropcolor
-P["media"].backdropfadecolor = P["medialib"].backdropfadecolor
+P["media"].backdropcolor = P["media"].backdropcolor
+P["media"].backdropfadecolor = P["media"].backdropfadecolor
 
 
-P["media"].font = LSM:Fetch("font", P["medialib"].font)
+P["media"].font = LSM:Fetch("font", P["media"].font)
 P["general"].bordercolor = { r = 0.1,g = 0.1,b = 0.1 }
 P["general"].backdropcolor = { r = 0.1,g = 0.1,b = 0.1 }
 P["general"].backdropfadecolor = { r = .06,g = .06,b = .06, a = 0.8 }   --调整底部透明度
