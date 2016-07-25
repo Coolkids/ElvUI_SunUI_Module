@@ -131,3 +131,52 @@ function E:CreateFS(parent, fontSize, justify, fontname, fontStyle)
 
     return f
 end
+
+function E:Print(...)
+	print(E["media"].hexvaluecolor.."ElvUI-SunUIMod"..':|r', ...)
+end
+
+
+function E:FadeOutFrame(p, t, show)  --隐藏  show为false时候为完全隐藏
+	if type(p) == "table" then 
+		if p:GetAlpha()>0 then
+			local fadeInfo = {}
+			fadeInfo.mode = "OUT"
+			fadeInfo.timeToFade = t or 1.5
+			if not show then
+				fadeInfo.finishedFunc = function() p:Hide() end 
+			end
+			fadeInfo.startAlpha = p:GetAlpha()
+			fadeInfo.endAlpha = 0
+			UIFrameFade(p, fadeInfo)
+		end 
+		return
+	end
+	if not _G[p] then print("SunUI:没有发现"..p.."这个框体")return end
+	if _G[p]:GetAlpha()>0 then
+		local fadeInfo = {}
+		fadeInfo.mode = "OUT"
+		fadeInfo.timeToFade = t or 1.5
+		if not show then
+			fadeInfo.finishedFunc = function() _G[p]:Hide() end 
+		end
+		fadeInfo.startAlpha = _G[p]:GetAlpha()
+		fadeInfo.endAlpha = 0
+		UIFrameFade(_G[p], fadeInfo)
+	end 
+end
+
+function E:FormatTime(s)
+	local day, hour, minute = 86400, 3600, 60
+	if s >= day then
+		--return format("%dd", floor(s/day + 0.5)), s % day
+		return format(COOLDOWN_DURATION_DAYS, floor(s/day + 0.5)), s % day
+	elseif s >= hour then
+		--return format("%dh", floor(s/hour + 0.5)), s % hour
+		return format(COOLDOWN_DURATION_HOURS, floor(s/hour + 0.5)), s % hour
+	elseif s >= minute then
+		--return format("%dm", floor(s/minute + 0.5)), s % minute
+		return format(COOLDOWN_DURATION_MIN, floor(s/minute + 0.5)), s % minute
+	end
+	return format("%ds", s), (s * 100 - floor(s * 100))/100
+end

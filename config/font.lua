@@ -29,6 +29,3 @@ P.actionbar.font = "SunUI Font"
 V.general.dmgfont = "SunUI Font"
 V.general.namefont = "SunUI Font"
 V.general.chatBubbleFont = "SunUI Font"
-
-
-
